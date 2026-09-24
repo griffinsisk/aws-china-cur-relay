@@ -339,7 +339,7 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
 </header>
 
 <main class="wrap doc">
-  <section class="intro">  <p>This guide runs the AWS China relay end to end in an ordinary AWS account, without an AWS China account. A bucket in <code>us-west-1</code> stands in for the China account's CUR bucket and holds a fake China CUR: either the synthetic sample in this repository's <code>test-data/</code> folder, or one you build from your own commercial CUR export. Everything else, including the relay, the destination bucket and the CloudZero connection, is set up exactly as in the setup guide.</p>
+  <section class="intro">  <p>This guide runs the AWS China relay end to end in an ordinary AWS account, without an AWS China account. A bucket in <code>us-west-1</code> stands in for the China account's CUR bucket and holds a fake China CUR: either the synthetic sample in this repository's <code>tests/test-data/</code> folder, or one you build from your own commercial CUR export. Everything else, including the relay, the destination bucket and the CloudZero connection, is set up exactly as in the setup guide.</p>
     <p>Because the fake CUR is built at a known rate, every number the relay and CloudZero produce can be checked against an expected value.</p>
   </section>
   <section id="how-it-works">
@@ -355,7 +355,7 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
       <thead><tr><th>Real setup</th><th>This test</th></tr></thead>
       <tbody>
         <tr><td>China CUR bucket in <code>cn-northwest-1</code>, in the <code>aws-cn</code> partition</td><td>A bucket in <code>us-west-1</code> in your test account</td></tr>
-        <tr><td>Real China CUR, billed in CNY</td><td>The sample China CUR in <code>test-data/</code>, or one made by <code>make_fake_china_cur.py</code> from your own export</td></tr>
+        <tr><td>Real China CUR, billed in CNY</td><td>The sample China CUR in <code>tests/test-data/</code>, or one made by <code>make_fake_china_cur.py</code> from your own export</td></tr>
         <tr><td>IAM user in the China account, with an access key</td><td>IAM user in your test account, with an access key. The relay reads with a key either way, so the same code path is tested.</td></tr>
         <tr><td>Destination bucket and relay in your commercial account</td><td>Destination bucket and relay in <code>us-east-1</code> in your test account</td></tr>
         <tr><td>IAM policy ARNs use <code>arn:aws-cn:</code> for the China bucket</td><td>All ARNs use <code>arn:aws:</code></td></tr>
@@ -384,9 +384,9 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
   <p>In the S3 console, switch to <strong>US West (N. California) us-west-1</strong> and create a general purpose bucket with the defaults: ACLs disabled, Block all public access on and SSE-S3 encryption. Then choose one of the two options below.</p>
 
   <h3>Option A: Use the sample dataset</h3>
-  <p>The quickest route. <code>test-data/fake-china-cur/</code> holds a ready-made China CUR for August 2026. It's synthetic, built from <code>test-data/sample-commercial-cur-2026-08.csv.gz</code>, with EC2, EBS, S3, Lambda, NAT gateway, cross-region transfer, a Compute Savings Plan, an RDS Reserved Instance, Enterprise Support fees and 6% VAT across Ningxia and Beijing. From the repository root:</p>
+  <p>The quickest route. <code>tests/test-data/fake-china-cur/</code> holds a ready-made China CUR for August 2026. It's synthetic, built from <code>tests/test-data/sample-commercial-cur-2026-08.csv.gz</code>, with EC2, EBS, S3, Lambda, NAT gateway, cross-region transfer, a Compute Savings Plan, an RDS Reserved Instance, Enterprise Support fees and 6% VAT across Ningxia and Beijing. From the repository root:</p>
 <div class="code-group">
-<pre><code>aws s3 sync ./test-data/fake-china-cur/ s3://<span class="ph">YOUR_SOURCE_BUCKET</span>/ --region us-west-1</code></pre>
+<pre><code>aws s3 sync ./tests/test-data/fake-china-cur/ s3://<span class="ph">YOUR_SOURCE_BUCKET</span>/ --region us-west-1</code></pre>
       <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you created in us-west-1</li></ul></div>
     </div>
   <div class="table-wrap">

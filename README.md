@@ -24,8 +24,8 @@ China CUR bucket (CNY)  -->  Relay Lambda  -->  Destination bucket (USD)  -->  A
 | [`docs/setup-guide.pdf`](docs/setup-guide.pdf) ([HTML](docs/setup-guide.html)) | Step-by-step setup with a real China account |
 | [`docs/test-guide.pdf`](docs/test-guide.pdf) ([HTML](docs/test-guide.html)) | End-to-end test in an ordinary AWS account, with no China account needed |
 | [`relay/lambda_function.py`](relay/lambda_function.py) | The relay. Paste it into a Python 3.12 Lambda function. |
-| [`test-data/fake-china-cur/`](test-data/fake-china-cur) | A ready-to-upload synthetic China CUR for August 2026: 7,580 rows across Ningxia and Beijing, in CNY |
-| [`test-data/sample-commercial-cur-2026-08.csv.gz`](test-data/sample-commercial-cur-2026-08.csv.gz) | The synthetic commercial CUR the China sample was built from |
+| [`tests/test-data/fake-china-cur/`](tests/test-data/fake-china-cur) | A ready-to-upload synthetic China CUR for August 2026: 7,580 rows across Ningxia and Beijing, in CNY |
+| [`tests/test-data/sample-commercial-cur-2026-08.csv.gz`](tests/test-data/sample-commercial-cur-2026-08.csv.gz) | The synthetic commercial CUR the China sample was built from |
 | [`tools/make_fake_china_cur.py`](tools/make_fake_china_cur.py) | Turns a commercial CUR export into a China-shaped CUR for testing |
 | [`tools/make_sample_commercial_cur.py`](tools/make_sample_commercial_cur.py) | Generates the synthetic commercial CUR |
 | [`tests/test_round_trip.py`](tests/test_round_trip.py) | Local round-trip test. Needs no AWS access. |
@@ -51,18 +51,18 @@ For most China footprints this costs a few dollars a month: Lambda at roughly 10
 
 ## Test data
 
-Everything in `test-data/` is synthetic: made-up accounts, resources, tags and prices. The China sample covers EC2, EBS, S3, Lambda, a NAT gateway, cross-region transfer, a Compute Savings Plan, an RDS Reserved Instance, Enterprise Support fees and 6% VAT. At a rate of `0.13986014` USD per CNY, the relay should report 7,580 rows, CNY 10,717.04 and USD 1,498.89. Upload it with:
+Everything in `tests/test-data/` is synthetic: made-up accounts, resources, tags and prices. The China sample covers EC2, EBS, S3, Lambda, a NAT gateway, cross-region transfer, a Compute Savings Plan, an RDS Reserved Instance, Enterprise Support fees and 6% VAT. At a rate of `0.13986014` USD per CNY, the relay should report 7,580 rows, CNY 10,717.04 and USD 1,498.89. Upload it with:
 
 ```bash
-aws s3 sync ./test-data/fake-china-cur/ s3://YOUR_SOURCE_BUCKET/
+aws s3 sync ./tests/test-data/fake-china-cur/ s3://YOUR_SOURCE_BUCKET/
 ```
 
 To rebuild it:
 
 ```bash
-python3 tools/make_sample_commercial_cur.py --out test-data/sample-commercial-cur-2026-08.csv.gz
-python3 tools/make_fake_china_cur.py test-data/sample-commercial-cur-2026-08.csv.gz \
-  --out test-data/fake-china-cur --prefix cur --report china-hourly --add-china-extras
+python3 tools/make_sample_commercial_cur.py --out tests/test-data/sample-commercial-cur-2026-08.csv.gz
+python3 tools/make_fake_china_cur.py tests/test-data/sample-commercial-cur-2026-08.csv.gz \
+  --out tests/test-data/fake-china-cur --prefix cur --report china-hourly --add-china-extras
 ```
 
 ## Run the local tests

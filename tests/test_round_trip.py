@@ -125,7 +125,7 @@ class RoundTrip(unittest.TestCase):
             sys.path.insert(0, str(ROOT / "relay"))
             import lambda_function as relay
 
-            s3 = LocalS3({"source": ROOT / "test-data" / "fake-china-cur", "dest": tmp / "dest"})
+            s3 = LocalS3({"source": ROOT / "tests" / "test-data" / "fake-china-cur", "dest": tmp / "dest"})
             relay.process_period(s3, s3, date(2026, 8, 1), {"2026-08": "0.13986014"})
             audit = json.loads(next((tmp / "dest" / "cur-relay-audit").rglob("*.json")).read_text())
             self.assertEqual(audit["rows"], 7580)
