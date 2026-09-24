@@ -215,7 +215,9 @@ class Mapper:
             elif col in ("product/location", "product/fromLocation", "product/toLocation"):
                 row[i] = LOCATION_NAMES.sub(CN[target_or_default]["location"], v)
             elif col in ("lineItem/UsageType", "product/usagetype"):
-                row[i] = self.usage_type(v, target, product_code)
+                # Savings Plan fees carry no product region but China bills prefix them (CNW1-ComputeSP:...)
+                sp_default = NINGXIA if product_code == "ComputeSavingsPlans" and not target else None
+                row[i] = self.usage_type(v, target or sp_default, product_code)
             elif col == "bill/BillingEntity" and v == "AWS":
                 row[i] = CN[target_or_default]["entity"]
             elif col in ("lineItem/LegalEntity", "bill/InvoicingEntity") and v.startswith("Amazon Web Services"):

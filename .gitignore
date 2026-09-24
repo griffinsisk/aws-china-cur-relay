@@ -1,7 +1,8 @@
-# Billing data never belongs in this repo
+# Billing data never belongs in this repo. The synthetic samples in test-data/ are the only exception.
 *.csv
 *.csv.gz
 *.zip
+!test-data/**/*.csv.gz
 fake-cn/
 out/
 audit/

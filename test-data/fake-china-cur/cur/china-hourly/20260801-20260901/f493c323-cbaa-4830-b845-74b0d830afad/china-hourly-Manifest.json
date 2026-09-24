@@ -1,0 +1,335 @@
+{
+  "assemblyId": "f493c323-cbaa-4830-b845-74b0d830afad",
+  "account": "111111111111",
+  "columns": [
+    {
+      "category": "identity",
+      "name": "LineItemId",
+      "type": "OptionalString"
+    },
+    {
+      "category": "identity",
+      "name": "TimeInterval",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "InvoiceId",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "InvoicingEntity",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "BillingEntity",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "BillType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "PayerAccountId",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "BillingPeriodStartDate",
+      "type": "OptionalString"
+    },
+    {
+      "category": "bill",
+      "name": "BillingPeriodEndDate",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UsageAccountId",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "LineItemType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UsageStartDate",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UsageEndDate",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "ProductCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UsageType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "Operation",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "AvailabilityZone",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "ResourceId",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UsageAmount",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "NormalizationFactor",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "NormalizedUsageAmount",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "CurrencyCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "UnblendedRate",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "UnblendedCost",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "BlendedRate",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "BlendedCost",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "lineItem",
+      "name": "LineItemDescription",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "TaxType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "lineItem",
+      "name": "LegalEntity",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "ProductName",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "instanceType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "location",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "fromLocation",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "toLocation",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "fromRegionCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "toRegionCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "operatingSystem",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "productFamily",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "region",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "regionCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "servicecode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "usagetype",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "volumeType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "product",
+      "name": "databaseEngine",
+      "type": "OptionalString"
+    },
+    {
+      "category": "pricing",
+      "name": "currency",
+      "type": "OptionalString"
+    },
+    {
+      "category": "pricing",
+      "name": "publicOnDemandCost",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "pricing",
+      "name": "publicOnDemandRate",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "pricing",
+      "name": "RateCode",
+      "type": "OptionalString"
+    },
+    {
+      "category": "pricing",
+      "name": "term",
+      "type": "OptionalString"
+    },
+    {
+      "category": "pricing",
+      "name": "unit",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "SavingsPlanARN",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "SavingsPlanRate",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "SavingsPlanEffectiveCost",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "TotalCommitmentToDate",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "UsedCommitment",
+      "type": "OptionalBigDecimal"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "RecurringCommitmentForBillingPeriod",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "OfferingType",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "PaymentOption",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "PurchaseTerm",
+      "type": "OptionalString"
+    },
+    {
+      "category": "savingsPlan",
+      "name": "Region",
+      "type": "OptionalString"
+    },
+    {
+      "category": "resourceTags",
+      "name": "user:team",
+      "type": "OptionalString"
+    },
+    {
+      "category": "resourceTags",
+      "name": "user:environment",
+      "type": "OptionalString"
+    },
+    {
+      "category": "resourceTags",
+      "name": "user:service",
+      "type": "OptionalString"
+    }
+  ],
+  "charset": "UTF-8",
+  "compression": "GZIP",
+  "contentType": "text/csv",
+  "reportId": "550cc86c3471cb529a3faccbf2df61b73b41d859c8c1a9906b2691cb092343d9",
+  "reportName": "china-hourly",
+  "billingPeriod": {
+    "start": "20260801T000000.000Z",
+    "end": "20260901T000000.000Z"
+  },
+  "bucket": "fake-china-cur",
+  "reportKeys": [
+    "cur/china-hourly/20260801-20260901/f493c323-cbaa-4830-b845-74b0d830afad/china-hourly-00001.csv.gz"
+  ],
+  "additionalArtifactKeys": []
+}

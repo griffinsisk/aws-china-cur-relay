@@ -114,5 +114,24 @@ class RoundTrip(unittest.TestCase):
             self.assertEqual(before, sorted(p.name for p in (tmp / "dest").rglob("*")))
 
 
+    def test_sample_dataset(self):
+        """The committed sample China CUR converts to the totals the test guide documents."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = pathlib.Path(tmp)
+            os.environ.update(CN_REGION="us-west-1", CN_CUR_BUCKET="source", CN_CUR_PREFIX="cur",
+                              CUR_REPORT="china-hourly", CN_SECRET_ID="unused", DEST_BUCKET="dest",
+                              DEST_PREFIX="china-cur", FX_RATES_KEY="fx/cny_usd_monthly.json")
+            sys.modules.setdefault("boto3", types.SimpleNamespace(client=lambda *a, **k: None))
+            sys.path.insert(0, str(ROOT / "relay"))
+            import lambda_function as relay
+
+            s3 = LocalS3({"source": ROOT / "test-data" / "fake-china-cur", "dest": tmp / "dest"})
+            relay.process_period(s3, s3, date(2026, 8, 1), {"2026-08": "0.13986014"})
+            audit = json.loads(next((tmp / "dest" / "cur-relay-audit").rglob("*.json")).read_text())
+            self.assertEqual(audit["rows"], 7580)
+            self.assertEqual(audit["unblended_cny"], "10717.04")
+            self.assertEqual(audit["unblended_usd"], "1498.89")
+
+
 if __name__ == "__main__":
     unittest.main()

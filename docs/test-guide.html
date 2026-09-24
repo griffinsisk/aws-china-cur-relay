@@ -333,14 +333,14 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
     <dl class="facts">
       <div><dt>Stand-in China</dt><dd>us-west-1</dd></div>
       <div><dt>Relay and destination</dt><dd>us-east-1</dd></div>
-      <div><dt>Test data</dt><dd>Your own CUR export</dd></div>
+      <div><dt>Test data</dt><dd>Sample dataset or your own export</dd></div>
     </dl>
   </div>
 </header>
 
 <main class="wrap doc">
-  <section class="intro">  <p>This guide runs the AWS China relay end to end in an ordinary AWS account, without an AWS China account. A bucket in <code>us-west-1</code> stands in for the China account's CUR bucket and holds a fake China CUR, built from one of your own commercial CUR exports. Everything else, including the relay, the destination bucket and the CloudZero connection, is set up exactly as in the setup guide.</p>
-    <p>Because the fake CUR is built at a known rate, the relay's output can be checked against your original export to the cent.</p>
+  <section class="intro">  <p>This guide runs the AWS China relay end to end in an ordinary AWS account, without an AWS China account. A bucket in <code>us-west-1</code> stands in for the China account's CUR bucket and holds a fake China CUR: either the synthetic sample in this repository's <code>test-data/</code> folder, or one you build from your own commercial CUR export. Everything else, including the relay, the destination bucket and the CloudZero connection, is set up exactly as in the setup guide.</p>
+    <p>Because the fake CUR is built at a known rate, every number the relay and CloudZero produce can be checked against an expected value.</p>
   </section>
   <section id="how-it-works">
     <h2>How It Works</h2>
@@ -355,7 +355,7 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
       <thead><tr><th>Real setup</th><th>This test</th></tr></thead>
       <tbody>
         <tr><td>China CUR bucket in <code>cn-northwest-1</code>, in the <code>aws-cn</code> partition</td><td>A bucket in <code>us-west-1</code> in your test account</td></tr>
-        <tr><td>Real China CUR, billed in CNY</td><td>A fake China CUR made by <code>make_fake_china_cur.py</code> from your own export</td></tr>
+        <tr><td>Real China CUR, billed in CNY</td><td>The sample China CUR in <code>test-data/</code>, or one made by <code>make_fake_china_cur.py</code> from your own export</td></tr>
         <tr><td>IAM user in the China account, with an access key</td><td>IAM user in your test account, with an access key. The relay reads with a key either way, so the same code path is tested.</td></tr>
         <tr><td>Destination bucket and relay in your commercial account</td><td>Destination bucket and relay in <code>us-east-1</code> in your test account</td></tr>
         <tr><td>IAM policy ARNs use <code>arn:aws-cn:</code> for the China bucket</td><td>All ARNs use <code>arn:aws:</code></td></tr>
@@ -366,33 +366,49 @@ footer .fmono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06e
   <section id="before-you-start">
     <h2>Before You Start</h2>
   <div class="callout important">
-    <p class="label"><span class="dot"></span>Keep your test data private</p>
-    <p class="lead">The fake CUR contains your real account data: resource IDs, resource names and tags.</p>
-    <p>Only upload it to accounts and CloudZero organizations you control. Use a test CloudZero organization, or one you're comfortable adding test spend to.</p>
+    <p class="label"><span class="dot"></span>Test spend shows up in CloudZero</p>
+    <p class="lead">Use a test CloudZero organization, or one where extra test spend won't confuse anyone.</p>
+    <p>The sample dataset is entirely synthetic. If you build a fake CUR from your own export instead, it contains your real resource IDs, names and tags, so only upload it to accounts you control.</p>
   </div>
   <h3>Prerequisites</h3>
   <ul>
     <li>An AWS account where you can create IAM users and roles, S3 buckets, Secrets Manager secrets and Lambda functions</li>
     <li>That account connected to a CloudZero organization, so you can create an S3 Bucket connection in Step 7</li>
-    <li>One billing period of a Legacy CUR export in CSV format, ideally with the <code>Manifest.json</code> AWS writes alongside it</li>
-    <li><code>relay.py</code> and <code>make_fake_china_cur.py</code> from this repository</li>
+    <li>A clone of this repository. If you'd rather test with your own data, you also need one billing period of a Legacy CUR export in CSV format.</li>
     <li>The AWS CLI, signed in to that account, and Python 3.9 or later</li>
   </ul>
   </section>
-  <section id="build-and-upload-the-fake-china-cur">
+  <section id="upload-a-fake-china-cur">
     <div class="eyebrow"><span class="dot"></span>Step 01</div>
-    <h2>Build and Upload the Fake China CUR</h2>
-  <ol>
-    <li>Build the fake CUR from your export. Leave out <code>--add-china-extras</code> for this test, so every value converts back to your original exactly:</li>
-  </ol>
+    <h2>Upload a Fake China CUR</h2>
+  <p>In the S3 console, switch to <strong>US West (N. California) us-west-1</strong> and create a general purpose bucket with the defaults: ACLs disabled, Block all public access on and SSE-S3 encryption. Then choose one of the two options below.</p>
+
+  <h3>Option A: Use the sample dataset</h3>
+  <p>The quickest route. <code>test-data/fake-china-cur/</code> holds a ready-made China CUR for August 2026. It's synthetic, built from <code>test-data/sample-commercial-cur-2026-08.csv.gz</code>, with EC2, EBS, S3, Lambda, NAT gateway, cross-region transfer, a Compute Savings Plan, an RDS Reserved Instance, Enterprise Support fees and 6% VAT across Ningxia and Beijing. From the repository root:</p>
 <div class="code-group">
-<pre><code>python3 make_fake_china_cur.py ./<span class="ph">YOUR_EXPORT_FOLDER</span>/ --out ./fake-cn \
-  --prefix cur --report china-hourly --bucket <span class="ph">YOUR_SOURCE_BUCKET</span> --remap-accounts</code></pre>
-      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_EXPORT_FOLDER</code>: the folder holding your commercial CUR export for one billing period</li><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you create in us-west-1 in Step 1</li></ul></div>
+<pre><code>aws s3 sync ./test-data/fake-china-cur/ s3://<span class="ph">YOUR_SOURCE_BUCKET</span>/ --region us-west-1</code></pre>
+      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you created in us-west-1</li></ul></div>
     </div>
-  <ol start="2">
-    <li>Note your export's total unblended cost. It's the number the relay and CloudZero should reproduce:</li>
-  </ol>
+  <div class="table-wrap">
+    <table class="cz kv">
+      <tbody>
+        <tr><th>Billing month</th><td><code>2026-08</code></td></tr>
+        <tr><th>Rows</th><td>7,580</td></tr>
+        <tr><th>Total in CNY</th><td>10,717.04</td></tr>
+        <tr><th>Expected USD at 0.13986014</th><td>1,498.89</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Option B: Build one from your own export</h3>
+  <p>Use this to test with your own services and tags. Build the fake CUR, leaving out <code>--add-china-extras</code> so every value converts back to your original exactly:</p>
+<div class="code-group">
+<pre><code>python3 tools/make_fake_china_cur.py ./<span class="ph">YOUR_EXPORT_FOLDER</span>/ --out ./fake-cn \
+  --prefix cur --report china-hourly --bucket <span class="ph">YOUR_SOURCE_BUCKET</span> --remap-accounts
+aws s3 sync ./fake-cn/ s3://<span class="ph">YOUR_SOURCE_BUCKET</span>/ --region us-west-1</code></pre>
+      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_EXPORT_FOLDER</code>: the folder holding your commercial CUR export for one billing period</li><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you created in us-west-1</li></ul></div>
+    </div>
+  <p>Then note your export's total unblended cost. It's the USD number the relay and CloudZero should reproduce:</p>
 <div class="code-group">
 <pre><code>python3 -c "import csv,gzip,glob,sys; t=0
 for f in glob.glob('<span class="ph">YOUR_EXPORT_FOLDER</span>/**/*.csv*', recursive=True):
@@ -401,16 +417,10 @@ for f in glob.glob('<span class="ph">YOUR_EXPORT_FOLDER</span>/**/*.csv*', recur
 print(round(t,2))"</code></pre>
       <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_EXPORT_FOLDER</code>: the folder holding your commercial CUR export for one billing period</li></ul></div>
     </div>
-  <ol start="3">
-    <li>In the S3 console, switch to <strong>US West (N. California) us-west-1</strong> and create a general purpose bucket with the defaults: ACLs disabled, Block all public access on and SSE-S3 encryption. Then upload the fake CUR:</li>
-  </ol>
-<div class="code-group">
-<pre><code>aws s3 sync ./fake-cn/ s3://<span class="ph">YOUR_SOURCE_BUCKET</span>/ --region us-west-1</code></pre>
-      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you create in us-west-1 in Step 1</li></ul></div>
-    </div>
+
   <div class="callout note">
     <p class="label"><span class="dot"></span>Expected result</p>
-    <p>The bucket contains <code>cur/china-hourly/YYYYMMDD-YYYYMMDD/china-hourly-Manifest.json</code> and one assembly folder holding the report file and a second manifest. The generator prints the row count and billing period. Note both for Step 6.</p>
+    <p>Either way, the bucket contains <code>cur/china-hourly/YYYYMMDD-YYYYMMDD/china-hourly-Manifest.json</code> and one assembly folder holding the report file and a second manifest. From here on, "your expected total" means 1,498.89 for the sample, or your export's total for Option B.</p>
   </div>
   </section>
   <section id="create-the-reader-user-and-store-its-key">
@@ -434,7 +444,7 @@ print(round(t,2))"</code></pre>
     }
   ]
 }</code></pre>
-      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you create in us-west-1 in Step 1</li></ul></div>
+      <div class="replace-note"><p class="label">Replace before pasting</p><ul><li><code class="ph">YOUR_SOURCE_BUCKET</code>: the stand-in China bucket you created in us-west-1</li></ul></div>
     </div>
   <p>Create an access key for the user. Then, in Secrets Manager in <code>us-east-1</code>, store it as a secret named <code>aws-china-cur-reader</code>, using <strong>Other type of secret → Plaintext</strong>:</p>
 <div class="code-group">
@@ -454,7 +464,7 @@ print(round(t,2))"</code></pre>
   <section id="upload-the-test-exchange-rate">
     <div class="eyebrow"><span class="dot"></span>Step 04</div>
     <h2>Upload the Test Exchange Rate</h2>
-  <p>Save this as <code>cny_usd_monthly.json</code>, using your billing month as the key, and upload it. <code>0.13986014</code> is 1 ÷ 7.15, which reverses the rate the generator used.</p>
+  <p>Save this as <code>cny_usd_monthly.json</code>, using your billing month as the key (<code>2026-08</code> for the sample), and upload it. <code>0.13986014</code> is 1 ÷ 7.15, which reverses the rate the generator used.</p>
 <pre><code>{ "YYYY-MM": "0.13986014" }</code></pre>
 <div class="code-group">
 <pre><code>aws s3 cp cny_usd_monthly.json s3://<span class="ph">YOUR_DEST_BUCKET</span>/fx/cny_usd_monthly.json</code></pre>
@@ -516,7 +526,7 @@ print(round(t,2))"</code></pre>
   <section id="run-and-check-the-relay">
     <div class="eyebrow"><span class="dot"></span>Step 06</div>
     <h2>Run and Check the Relay</h2>
-  <p>On the function's <strong>Test</strong> tab, run an event naming your billing month:</p>
+  <p>On the function's <strong>Test</strong> tab, run an event naming your billing month, which is <code>2026-08</code> for the sample:</p>
 <pre><code>{"periods": ["YYYY-MM"]}</code></pre>
   <div class="callout important">
     <p class="label"><span class="dot"></span>Don't test with an empty event</p>
@@ -527,8 +537,8 @@ print(round(t,2))"</code></pre>
     <table class="cz">
       <thead><tr><th>Check</th><th>Expected</th></tr></thead>
       <tbody>
-        <tr><td>Log output</td><td>One line for the month with your row count, and USD equal to your Step 1 total</td></tr>
-        <tr><td>Audit record in <code>cur-relay-audit/</code></td><td><code>rows</code> matches the generator's count, <code>unblended_usd</code> matches your Step 1 total, and <code>converted_columns</code> lists your report's money columns</td></tr>
+        <tr><td>Log output</td><td>One line for the month with your row count and your expected total. For the sample: <code>20260801-20260901: 7580 rows, CNY 10717.04… -&gt; USD 1498.88… at 0.13986014</code></td></tr>
+        <tr><td>Audit record in <code>cur-relay-audit/</code></td><td><code>rows</code> matches your row count and <code>unblended_usd</code> matches your expected total. For the sample: 7580 rows, <code>unblended_usd</code> 1498.89 and 9 <code>converted_columns</code>.</td></tr>
         <tr><td>Report in <code>china-cur/china-hourly/</code></td><td>A top-level manifest plus one assembly folder with the converted file and its manifest. The manifest's <code>bucket</code> is your destination bucket.</td></tr>
         <tr><td>Run the same event again</td><td><code>already up to date</code>, with nothing new written</td></tr>
       </tbody>
@@ -575,7 +585,7 @@ print(c)"</code></pre>
     <table class="cz">
       <thead><tr><th>Check</th><th>Expected</th></tr></thead>
       <tbody>
-        <tr><td>Total for <code>Ningxia</code> plus <code>Beijing</code></td><td>Your Step 1 total</td></tr>
+        <tr><td>Total for <code>Ningxia</code> plus <code>Beijing</code></td><td>Your expected total: $1,498.89 for the sample</td></tr>
         <tr><td>Region values</td><td><code>cn-northwest-1</code> and <code>cn-north-1</code></td></tr>
         <tr><td>Usage types</td><td><code>CNW1-</code> and <code>CNN1-</code> prefixes</td></tr>
       </tbody>
@@ -588,12 +598,12 @@ print(c)"</code></pre>
   <p>This checks that CloudZero replaces a month when the relay publishes a new version, which the month-end close depends on.</p>
   <ol>
     <li>Change the rate in <code>cny_usd_monthly.json</code> to <code>"0.1398"</code> and upload it again.</li>
-    <li>Run the same test event. The log shows a new version, at your Step 1 total × 0.99957.</li>
+    <li>Run the same test event. The log shows a new version, at your expected total × 0.99957. For the sample, that's USD 1,498.24.</li>
     <li>After CloudZero reprocesses, the month's Billed Cost should show that new total.</li>
   </ol>
   <div class="callout important">
     <p class="label"><span class="dot"></span>What a failure looks like</p>
-    <p>If the month shows about twice your total, CloudZero added the new version on top of the old one instead of replacing it. Raise it with your CloudZero contact before relying on month-end restatements.</p>
+    <p>If the month shows about twice your total ($2,997.13 for the sample), CloudZero added the new version on top of the old one instead of replacing it. Raise it with your CloudZero contact before relying on month-end restatements.</p>
   </div>
   </section>
   <section id="clean-up">
