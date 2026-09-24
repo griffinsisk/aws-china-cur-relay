@@ -1,0 +1,10 @@
+# Billing data never belongs in this repo
+*.csv
+*.csv.gz
+*.zip
+fake-cn/
+out/
+audit/
+cny_usd_monthly.json
+__pycache__/
+.DS_Store
